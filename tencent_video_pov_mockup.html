@@ -1,0 +1,412 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #141414; color: #fff; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+  .page { background: #141414; min-height: 100vh; }
+
+  /* TOP NAV */
+  .nav { background: #1a1a1a; display: flex; align-items: center; padding: 0 16px; height: 50px; gap: 20px; border-bottom: 1px solid #2a2a2a; }
+  .nav-logo { display: flex; align-items: center; gap: 6px; }
+  .nav-logo .play-icon { width: 28px; height: 28px; background: #FF6600; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+  .nav-logo .play-icon svg { width: 16px; height: 16px; fill: #fff; }
+  .nav-logo span { color: #ff6600; font-size: 14px; font-weight: 600; letter-spacing: 1px; }
+  .nav-links { display: flex; gap: 16px; }
+  .nav-links a { color: #ccc; font-size: 13px; text-decoration: none; }
+  .nav-links a:hover { color: #fff; }
+  .nav-search { flex: 1; max-width: 260px; margin-left: auto; }
+  .nav-search input { width: 100%; background: #2a2a2a; border: none; border-radius: 16px; padding: 6px 14px; color: #fff; font-size: 12px; outline: none; }
+  .nav-search input::placeholder { color: #888; }
+  .nav-actions { display: flex; gap: 12px; align-items: center; margin-left: 12px; }
+  .nav-vip { background: linear-gradient(90deg, #c8a456, #e8c478); color: #3a2500; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 3px; }
+  .nav-btn { background: #333; border: none; color: #ccc; font-size: 12px; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+
+  /* MAIN CONTENT */
+  .main { display: flex; gap: 0; }
+
+  /* VIDEO SECTION */
+  .video-section { flex: 1; padding: 0; }
+  .video-title-bar { padding: 12px 16px 8px; }
+  .video-title-bar h1 { font-size: 18px; font-weight: 600; color: #fff; }
+  .video-subtitle { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+  .player-wrap { position: relative; background: #000; width: 100%; padding-top: 52%; }
+  .player-inner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .player-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at center, #3a1a00 0%, #1a0a00 50%, #000 100%); }
+  .player-logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+  .player-logo-ring { width: 80px; height: 80px; border-radius: 50%; border: 3px solid rgba(255,160,0,0.3); display: flex; align-items: center; justify-content: center; }
+  .player-logo-ring svg { width: 36px; height: 36px; fill: rgba(255,160,0,0.5); }
+  .player-top-right { position: absolute; top: 10px; right: 10px; }
+  .client-btn { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+  .time-overlay { position: absolute; bottom: 50px; left: 0; right: 0; padding: 0 12px; }
+  .progress-bar { height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; position: relative; cursor: pointer; }
+  .progress-fill { height: 100%; width: 3%; background: #FF6600; border-radius: 2px; }
+  .progress-dot { position: absolute; top: -4px; left: 3%; width: 10px; height: 10px; background: #FF6600; border-radius: 50%; transform: translateX(-50%); }
+  .time-labels { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; color: rgba(255,255,255,0.6); }
+  .player-controls { position: absolute; bottom: 8px; left: 0; right: 0; padding: 0 12px; display: flex; align-items: center; gap: 10px; }
+  .ctrl-btn { background: none; border: none; color: rgba(255,255,255,0.8); cursor: pointer; padding: 2px; font-size: 14px; }
+  .ctrl-play { width: 26px; height: 26px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .ctrl-spacer { flex: 1; }
+  .ctrl-tag { font-size: 11px; color: rgba(255,255,255,0.6); background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 3px; }
+  .danmu-input { flex: 1; max-width: 160px; background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 11px; padding: 4px 8px; border-radius: 12px; outline: none; }
+  .danmu-input::placeholder { color: rgba(255,255,255,0.4); }
+
+  /* POV SECTION — THE STAR FEATURE */
+  .pov-section { padding: 14px 16px 6px; }
+  .pov-heading { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; display: flex; align-items: center; gap: 8px; }
+  .pov-badge { background: linear-gradient(90deg, #FF6B35, #FF9500); font-size: 10px; color: #fff; padding: 2px 7px; border-radius: 8px; font-weight: 500; letter-spacing: 0.5px; }
+  .pov-subtitle { font-size: 11px; color: #888; margin-bottom: 14px; }
+  .pov-avatars { display: flex; gap: 20px; }
+
+  .pov-card { display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer; position: relative; }
+  .pov-ring { width: 68px; height: 68px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, #FF6B35, #FF9500, #FFD700); position: relative; transition: transform 0.2s; }
+  .pov-ring:hover { transform: scale(1.06); }
+  .pov-ring.seen { background: linear-gradient(135deg, #555, #666); }
+  .pov-ring-inner { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #141414; overflow: hidden; background: #2a2a2a; display: flex; align-items: center; justify-content: center; }
+  .pov-avatar { width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .pov-avatar.xu { background: linear-gradient(135deg, #FF9A8B, #FF6E7F); color: #fff; }
+  .pov-avatar.ji { background: linear-gradient(135deg, #4FACFE, #00F2FE); color: #fff; }
+  .pov-name { font-size: 12px; color: #ccc; font-weight: 500; }
+  .pov-new-dot { position: absolute; top: 2px; right: 2px; width: 10px; height: 10px; background: #FF6600; border-radius: 50%; border: 2px solid #141414; }
+
+  /* VIDEO INFO BELOW */
+  .section-label { padding: 10px 16px 0; font-size: 13px; font-weight: 600; color: #fff; border-top: 1px solid #2a2a2a; margin-top: 10px; padding-top: 10px; }
+  .review-stub { padding: 8px 16px; display: flex; gap: 10px; align-items: flex-start; }
+  .review-avatar { width: 30px; height: 30px; border-radius: 50%; background: #444; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #aaa; }
+  .review-body { flex: 1; }
+  .review-name { font-size: 12px; color: #aaa; }
+  .review-text { font-size: 12px; color: #ccc; margin-top: 2px; }
+
+  /* RIGHT SIDEBAR */
+  .sidebar { width: 220px; flex-shrink: 0; background: #1a1a1a; padding: 12px; border-left: 1px solid #2a2a2a; }
+  .sidebar-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .series-meta { font-size: 11px; color: #888; margin-bottom: 6px; }
+  .series-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+  .series-tag { font-size: 10px; background: #2a2a2a; color: #aaa; padding: 2px 6px; border-radius: 3px; }
+  .series-rating { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
+  .rating-num { font-size: 22px; font-weight: 700; color: #FF9500; }
+  .rating-heat { font-size: 12px; color: #888; }
+  .series-update { font-size: 11px; color: #888; margin-bottom: 10px; line-height: 1.5; }
+  .sidebar-actions { display: flex; gap: 8px; margin-bottom: 12px; }
+  .action-btn { background: #2a2a2a; border: none; color: #ccc; font-size: 11px; padding: 6px 10px; border-radius: 4px; cursor: pointer; flex: 1; }
+  .vip-banner { background: linear-gradient(90deg, #2a1f00, #3a2800); border: 1px solid #5a3f00; border-radius: 6px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .vip-text { font-size: 11px; color: #ccc; }
+  .vip-text strong { color: #ffc107; font-size: 12px; }
+  .vip-cta { background: linear-gradient(90deg, #c8a456, #e8c478); color: #3a2500; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+  .ep-tabs { display: flex; gap: 8px; margin-bottom: 8px; }
+  .ep-tab { font-size: 13px; color: #ccc; cursor: pointer; padding-bottom: 4px; }
+  .ep-tab.active { color: #fff; border-bottom: 2px solid #FF6600; }
+  .ep-select { font-size: 11px; color: #888; margin-bottom: 8px; }
+  .ep-ranges { display: flex; gap: 6px; margin-bottom: 8px; }
+  .ep-range { background: #252525; border: 1px solid #3a3a3a; color: #ccc; font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; }
+  .ep-range.active { background: #2a3a2a; border-color: #4a6a4a; color: #8BC34A; }
+  .ep-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .ep-num { background: #252525; border: none; color: #ccc; font-size: 12px; padding: 6px 4px; border-radius: 4px; cursor: pointer; text-align: center; position: relative; }
+  .ep-num.active { background: #ff6600; color: #fff; font-weight: 600; }
+  .ep-badge { position: absolute; top: 1px; right: 1px; font-size: 8px; padding: 1px 2px; border-radius: 2px; }
+  .badge-vip { background: #c8a456; color: #3a2500; }
+  .badge-free { background: #4CAF50; color: #fff; }
+  .badge-preview { background: #9C27B0; color: #fff; }
+
+  /* POV MODAL */
+  .pov-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  .pov-modal-overlay.open { opacity: 1; pointer-events: all; }
+  .pov-modal { width: 640px; background: #1a1a1a; border-radius: 14px; overflow: hidden; border: 1px solid #333; }
+  .pov-modal-video { width: 100%; aspect-ratio: 640/320; background: #000; position: relative; display: flex; align-items: center; justify-content: center; }
+  .pov-modal-video-bg { position: absolute; inset: 0; }
+  .pov-modal-video-bg.xu-bg { background: linear-gradient(180deg, #3d1a22 0%, #1a0a0d 50%, #0d0508 100%); }
+  .pov-modal-video-bg.ji-bg { background: linear-gradient(180deg, #0d1f3d 0%, #060f1a 50%, #02060d 100%); }
+  .pov-modal-header { position: absolute; top: 0; left: 0; right: 0; padding: 14px; display: flex; align-items: center; gap: 10px; }
+  .pov-modal-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+  .pov-modal-avatar.xu { background: linear-gradient(135deg, #FF9A8B, #FF6E7F); }
+  .pov-modal-avatar.ji { background: linear-gradient(135deg, #4FACFE, #00F2FE); }
+  .pov-modal-name { font-size: 13px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+  .pov-modal-sub { font-size: 11px; color: rgba(255,255,255,0.7); }
+  .pov-center-icon { position: relative; z-index: 2; width: 56px; height: 56px; background: rgba(255,255,255,0.1); border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .pov-center-icon svg { width: 24px; height: 24px; fill: #fff; margin-left: 3px; }
+  .pov-modal-footer { position: absolute; bottom: 0; left: 0; right: 0; padding: 14px; }
+  .pov-modal-quote { font-size: 13px; color: rgba(255,255,255,0.9); line-height: 1.5; text-shadow: 0 1px 4px rgba(0,0,0,0.8); margin-bottom: 8px; font-style: italic; }
+  .pov-modal-progress { height: 2px; background: rgba(255,255,255,0.2); border-radius: 1px; }
+  .pov-modal-progress-fill { height: 100%; width: 28%; background: #FF6600; border-radius: 1px; }
+  .pov-modal-bottom { padding: 12px; display: flex; align-items: center; justify-content: space-between; }
+  .pov-modal-series { font-size: 11px; color: #888; }
+  .pov-modal-close { background: #2a2a2a; border: none; color: #ccc; font-size: 11px; padding: 5px 12px; border-radius: 16px; cursor: pointer; }
+</style>
+
+<div class="page">
+  <div class="nav">
+    <div class="nav-logo">
+      <div class="play-icon">
+        <svg viewBox="0 0 16 16"><polygon points="4,2 14,8 4,14"/></svg>
+      </div>
+      <span>腾讯视频</span>
+    </div>
+    <div class="nav-links">
+      <a href="#">电视剧</a><a href="#">电影</a><a href="#">综艺</a><a href="#">动漫</a><a href="#">短剧</a>
+    </div>
+    <div class="nav-search">
+      <input type="text" value="蜜语纪" placeholder="搜索" />
+    </div>
+    <div class="nav-actions">
+      <span class="nav-vip">V 会员专区</span>
+      <button class="nav-btn">下载客户端</button>
+      <button class="nav-btn" style="background:#FF6600; color:#fff; border:none;">登录</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="video-section">
+      <div class="video-title-bar">
+        <h1>蜜语纪 第28集</h1>
+        <div class="video-subtitle">顶苏霸总x离异御姐！钟汉良朱珠捉奸鉴渣双强烈爱</div>
+      </div>
+
+      <div class="player-wrap">
+        <div class="player-inner">
+          <video id="mainVideo" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;" controls>
+            <source src="video1.mp4" type="video/mp4">
+          </video>
+          <div class="player-bg"></div>
+          <div class="player-logo">
+            <div class="player-logo-ring">
+              <svg viewBox="0 0 36 36"><polygon points="10,6 30,18 10,30"/></svg>
+            </div>
+          </div>
+          <div class="player-top-right">
+            <button class="client-btn">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="display:inline"><rect x="1" y="2" width="8" height="6" rx="1" stroke="white" stroke-width="1"/><polygon points="9,4 12,3 12,7" fill="white"/></svg>
+              客户端播放
+            </button>
+          </div>
+          <div class="time-overlay">
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+              <div class="progress-dot"></div>
+            </div>
+            <div class="time-labels"><span>00:01</span><span>46:41</span></div>
+          </div>
+          <div class="player-controls">
+            <button class="ctrl-btn ctrl-play">▶</button>
+            <button class="ctrl-btn">⏭</button>
+            <button class="ctrl-btn" style="font-size:11px;">弹</button>
+            <input class="danmu-input" type="text" placeholder="登录发个友善的弹幕吧！" />
+            <span class="ctrl-spacer"></span>
+            <span class="ctrl-tag">语言</span>
+            <span class="ctrl-tag">480P</span>
+            <span class="ctrl-tag">倍速</span>
+            <button class="ctrl-btn">⛶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- POV FEATURE SECTION -->
+      <div class="pov-section">
+        <div class="pov-heading">
+          进入心流 · 第一视角 POV
+          <span class="pov-badge">NEW</span>
+        </div>
+        <div class="pov-subtitle">选择一个角色，以 ta 的视角沉浸剧情</div>
+        <div class="pov-avatars">
+          <div class="pov-card" onclick="openPov('xu')">
+            <div class="pov-ring">
+              <div class="pov-ring-inner">
+                <img src="许蜜语1.png" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />
+              </div>
+              <div class="pov-new-dot"></div>
+            </div>
+            <div class="pov-name">许蜜语</div>
+          </div>
+          <div class="pov-card" onclick="openPov('ji')">
+            <div class="pov-ring">
+              <div class="pov-ring-inner">
+                <img src="季风1.png" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />
+              </div>
+              <div class="pov-new-dot"></div>
+            </div>
+            <div class="pov-name">纪封</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">用户评价</div>
+      <div class="review-stub">
+        <div class="review-avatar">用</div>
+        <div class="review-body">
+          <div class="review-name">剧迷_小花 · ★★★★★</div>
+          <div class="review-text">钟汉良真的太帅了，这一集的眼神对戏让人心跳加速…</div>
+        </div>
+      </div>
+      <div class="review-stub">
+        <div class="review-avatar">用</div>
+        <div class="review-body">
+          <div class="review-name">深夜追剧人 · ★★★★</div>
+          <div class="review-text">节奏很快，第一集就有高潮，值得追！</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-title">蜜语纪 <span style="font-size:11px;color:#888;font-weight:400;">简介 ›</span></div>
+      <div class="series-meta">内地 · 2026 · 都市爱情 · 女性成长</div>
+      <div class="series-tags">
+        <span class="series-tag">办公室恋情</span>
+        <span class="series-tag">双强</span>
+        <span class="series-tag">甜宠</span>
+      </div>
+      <div class="series-rating">
+        <span class="rating-num">9.1</span>
+        <span class="rating-heat">🔥 24237</span>
+      </div>
+      <div class="series-update">追剧日历 · 更新至32集/全38集 · 会员每日18点更新 ›</div>
+      <div class="sidebar-actions">
+        <button class="action-btn">+ 追剧</button>
+        <button class="action-btn">↓ 下载</button>
+        <button class="action-btn">···</button>
+      </div>
+      <div class="vip-banner">
+        <div class="vip-text"><strong>新客VIP专享特惠！</strong><br>好剧热综持续更新</div>
+        <button class="vip-cta">开通会员</button>
+      </div>
+      <div class="ep-tabs">
+        <span class="ep-tab active">播放列表</span>
+        <span class="ep-tab">相关推荐</span>
+      </div>
+      <div class="ep-select">选集</div>
+      <div class="ep-ranges">
+        <button class="ep-range active">1–30</button>
+        <button class="ep-range">31–36</button>
+      </div>
+      <div class="ep-grid">
+        <button class="ep-num active">1</button>
+        <button class="ep-num">2</button>
+        <button class="ep-num">3<span class="ep-badge badge-vip">V</span></button>
+        <button class="ep-num">4<span class="ep-badge badge-vip">V</span></button>
+        <button class="ep-num">5<span class="ep-badge badge-vip">V</span></button>
+        <button class="ep-num">6<span class="ep-badge badge-vip">V</span></button>
+        <button class="ep-num">7<span class="ep-badge badge-vip">V</span></button>
+        <button class="ep-num">8<span class="ep-badge badge-vip">V</span></button>
+        <button class="ep-num">9<span class="ep-badge badge-vip">V</span></button>
+        <button class="ep-num">10<span class="ep-badge badge-free" style="font-size:7px;">限免</span></button>
+        <button class="ep-num">11<span class="ep-badge badge-free" style="font-size:7px;">限</span></button>
+        <button class="ep-num">12<span class="ep-badge badge-free" style="font-size:7px;">限</span></button>
+        <button class="ep-num">13<span class="ep-badge badge-free" style="font-size:7px;">限</span></button>
+        <button class="ep-num">14<span class="ep-badge badge-preview" style="font-size:7px;">预</span></button>
+        <button class="ep-num">15<span class="ep-badge badge-preview" style="font-size:7px;">预</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POV MODAL -->
+<div class="pov-modal-overlay" id="povModal" onclick="closePovIfOutside(event)">
+  <div class="pov-modal" id="povModalInner">
+    <div class="pov-modal-video" id="povVideoArea">
+      <div class="pov-modal-video-bg" id="povBg"></div>
+      <div class="pov-modal-header">
+        <div class="pov-modal-avatar" id="povModalAvatar"></div>
+        <div>
+          <div class="pov-modal-name" id="povModalName"></div>
+          <div class="pov-modal-sub">第一视角独白 · EP01</div>
+        </div>
+      </div>
+      <div class="pov-center-icon" id="povPlayBtn">
+        <svg viewBox="0 0 24 24"><polygon points="6,3 22,12 6,21"/></svg>
+      </div>
+      <div class="pov-modal-footer">
+        <div class="pov-modal-quote" id="povQuote"></div>
+        <div class="pov-modal-progress"><div class="pov-modal-progress-fill" id="povProgress"></div></div>
+      </div>
+    </div>
+    <div class="pov-modal-bottom">
+      <div class="pov-modal-series">蜜语纪 · 心流POV</div>
+      <button class="pov-modal-close" onclick="closePov()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const povData = {
+  xu: {
+    name: '许蜜语',
+    quote: '"我以为我早就习惯了一个人… 直到那天他出现在那扇旋转门前，我的心莫名其妙漏跳了一拍。"',
+    video: 'xu_pov.mp4',
+    bgClass: 'xu-bg',
+    avatarClass: 'xu',
+    img: '许蜜语1.png'
+  },
+  ji: {
+    name: '纪封',
+    quote: '"她以为我没看见她。我全程都看见了。我只是不知道，该不该靠近。"',
+    video: 'ji_pov.mp4',
+    bgClass: 'ji-bg',
+    avatarClass: 'ji',
+    img: '季风1.png'
+  }
+};
+
+function openPov(char) {
+  const d = povData[char];
+
+  document.getElementById('povBg').className = 'pov-modal-video-bg ' + d.bgClass;
+  document.getElementById('povModalName').textContent = d.name;
+  document.getElementById('povQuote').textContent = d.quote;
+
+  const av = document.getElementById('povModalAvatar');
+  av.className = 'pov-modal-avatar ' + d.avatarClass;
+  av.innerHTML = '<img src="' + d.img + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />';
+
+  // 清除旧视频
+  const videoArea = document.getElementById('povVideoArea');
+  const oldVideo = document.getElementById('povVideo');
+  if (oldVideo) { oldVideo.pause(); oldVideo.remove(); }
+
+  // 创建新视频
+  const vid = document.createElement('video');
+  vid.id = 'povVideo';
+  vid.src = d.video;
+  vid.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;';
+  vid.playsInline = true;
+  videoArea.appendChild(vid);
+  vid.controls = true;
+
+  // 播放按钮
+  const playBtn = document.getElementById('povPlayBtn');
+  playBtn.style.opacity = '1';
+  playBtn.style.zIndex = '3';
+
+  playBtn.onclick = function(e) {
+    e.stopPropagation();
+    if (vid.paused) {
+      vid.play().then(() => {
+        playBtn.style.opacity = '0';
+      }).catch(err => console.log('播放失败:', err));
+    } else {
+      vid.pause();
+      playBtn.style.opacity = '1';
+    }
+  };
+
+  vid.onclick = function(e) {
+    e.stopPropagation();
+    if (vid.paused) {
+      vid.play();
+      playBtn.style.opacity = '0';
+    } else {
+      vid.pause();
+      playBtn.style.opacity = '1';
+    }
+  };
+
+  document.getElementById('povModal').classList.add('open');
+}
+
+function closePov() {
+  const v = document.getElementById('povVideo');
+  if (v) { v.pause(); v.remove(); }
+  document.getElementById('povModal').classList.remove('open');
+}
+
+function closePovIfOutside(e) {
+  if (e.target === document.getElementById('povModal')) closePov();
+}
+</script>
